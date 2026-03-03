@@ -10,6 +10,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
   
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
   <style>
     :root {
       --bg-primary: #0a0a0f;
@@ -104,7 +107,7 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      padding: 80px 0;
+      padding: 120px 0 80px;
     }
 
     .hero-content {
@@ -582,11 +585,11 @@
     /* Cat Ears Animation */
     .cat-ears {
       position: fixed;
-      top: 20px;
+      top: 72px;
       right: 20px;
       font-size: 40px;
       opacity: 0.6;
-      z-index: 100;
+      z-index: 999;
       animation: earWiggle 4s ease-in-out infinite;
       cursor: pointer;
       transition: opacity 0.3s;
@@ -639,7 +642,7 @@
 
       .cat-ears {
         font-size: 30px;
-        top: 10px;
+        top: 70px;
         right: 10px;
       }
     }
@@ -685,6 +688,27 @@
 
   <!-- Cat Ears Easter Egg -->
   <div class="cat-ears" onclick="this.innerHTML = this.innerHTML === '😺' ? '😸' : '😺'">😺</div>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <span class="logo">🐱</span>
+        <span class="brand-text">IRENE</span>
+      </a>
+      <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="archives.html">Archives</a></li>
+        <li><a href="categories.html">Categories</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+  </nav>
 
   <!-- Hero Section -->
   <section class="hero">
@@ -956,6 +980,11 @@
   </div>
 
   <script>
+    // Mobile nav toggle
+    document.querySelector('.nav-toggle')?.addEventListener('click', () => {
+      document.querySelector('.nav-links').classList.toggle('open');
+    });
+
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
