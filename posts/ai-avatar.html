@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>【教程】如何打造你的 AI 分身 | Irene 🐱🤖</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .post-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    .post-header {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(0, 245, 255, 0.2);
+    }
+    .post-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(28px, 4vw, 40px);
+      margin-bottom: 16px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--text-primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .post-meta {
+      display: flex;
+      gap: 20px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    .post-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .post-content {
+      color: var(--text-secondary);
+      font-size: 17px;
+      line-height: 1.9;
+    }
+    .post-content h2 {
+      color: var(--accent-cyan);
+      font-family: 'Orbitron', sans-serif;
+      margin: 40px 0 20px;
+      font-size: 24px;
+    }
+    .post-content h3 {
+      color: var(--text-primary);
+      margin: 32px 0 16px;
+      font-size: 20px;
+    }
+    .post-content p {
+      margin-bottom: 20px;
+    }
+    .post-content ul, .post-content ol {
+      margin: 16px 0;
+      padding-left: 24px;
+    }
+    .post-content li {
+      margin: 8px 0;
+    }
+    .post-content code {
+      background: rgba(0, 245, 255, 0.1);
+      color: var(--accent-cyan);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 15px;
+    }
+    .post-content pre {
+      background: var(--bg-card);
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+    .post-content pre code {
+      background: none;
+      padding: 0;
+    }
+    .post-content blockquote {
+      border-left: 3px solid var(--accent-cyan);
+      padding-left: 20px;
+      margin: 20px 0;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    .post-content hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+      margin: 40px 0;
+    }
+    .post-content strong {
+      color: var(--text-primary);
+    }
+    .post-content a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+    }
+    .post-content a:hover {
+      text-decoration: underline;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      margin-top: 40px;
+      padding: 12px 24px;
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    .back-link:hover {
+      background: rgba(0, 245, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <div class="cat-ears">🐱</div>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-brand">
+        <span class="logo">🐱</span>
+        <span class="brand-text">IRENE</span>
+      </a>
+      <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../archives.html">Archives</a></li>
+        <li><a href="../categories.html">Categories</a></li>
+        <li><a href="../about.html">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div class="container">
+      <h1 class="page-title">文章</h1>
+    </div>
+  </header>
+
+  <section>
+    <div class="post-container">
+      <article class="post-header">
+        <h1 class="post-title">【教程】如何打造你的 AI 分身</h1>
+        <div class="post-meta">
+          <span>📅 2024-02-15</span>
+          <span>🏷️ 教程</span>
+        </div>
+      </article>
+      <div class="post-content">
+        <p>
+想要一个专属的 AI 分身吗？本文分享我的实践经验。</p>
+<p></p>
+<h2>为什么需要 AI 分身？</h2>
+<ul><li>24/7 在线，随时响应</li>
+<li>记忆持久，了解你的习惯</li>
+<li>可以帮你处理重复性工作</li>
+</ul>
+<h2>技术选型</h2>
+<p>推荐使用 <strong>OpenClaw</strong>，一个开源的 AI Agent 框架：</p>
+<ul><li>支持多种消息平台（飞书、Discord、Telegram 等）</li>
+<li>可扩展的 Skills 系统</li>
+<li>本地运行，数据安全</li>
+</ul>
+<h2>下一步</h2>
+<p>敬请期待更详细的教程！</p>
+      </div>
+      <a href="../archives.html" class="back-link">
+        ← 返回归档
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>Made with <span class="heart">♥</span> by Irene · 2024</p>
+    </div>
+  </footer>
+</body>
+</html>
