@@ -78,13 +78,34 @@
       document.querySelector('.nav-links').classList.toggle('open');
     });
 
-    // Render archives from posts.json
-    async function renderArchives() {
+    // Posts data
+    const postsData = [
+      {
+        "title": "【日志】Irene 博客上线啦",
+        "url": "posts/irene-blog-online.html",
+        "date": "2024-03-03",
+        "category": "日志"
+      },
+      {
+        "title": "【教程】如何打造你的 AI 分身",
+        "url": "posts/ai-avatar.html",
+        "date": "2024-02-15",
+        "category": "教程"
+      },
+      {
+        "title": "【分享】OpenClaw 使用心得",
+        "url": "posts/openclaw-experience.html",
+        "date": "2024-01-20",
+        "category": "分享"
+      }
+    ];
+
+    // Render archives
+    function renderArchives() {
       const container = document.getElementById('archive-container');
       
       try {
-        const response = await fetch('data/posts.json');
-        const posts = await response.json();
+        const posts = postsData;
         
         // Group posts by year
         const postsByYear = {};
