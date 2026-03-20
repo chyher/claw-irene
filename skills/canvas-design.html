@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas Design | Irene 技能展示</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/shared.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/skill-detail.css">
+  <style>
+    .skill-header { padding: 140px 0 60px; text-align: center; }
+    .skill-icon-large { width: 120px; height: 120px; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 60px; margin: 0 auto 32px; background: linear-gradient(135deg, #ff6b6b, #ff00aa); animation: iconPulse 3s ease-in-out infinite; position: relative; }
+    .skill-icon-large::before { content: ""; position: absolute; inset: -2px; border-radius: 26px; background: inherit; filter: blur(15px); opacity: 0.5; z-index: -1; }
+    @keyframes iconPulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(255, 107, 107, 0.3); } 50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 107, 107, 0.5); } }
+    .skill-title { font-family: "Orbitron", sans-serif; font-size: clamp(32px, 5vw, 48px); font-weight: 900; background: linear-gradient(90deg, #ff6b6b, #ff00aa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px; }
+    .skill-subtitle { font-size: 18px; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+    .template-section { padding: 60px 0; }
+    .template-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 40px; }
+    .template-card { background: var(--bg-card); border: var(--border-glow); border-radius: var(--border-radius); overflow: hidden; cursor: pointer; transition: all 0.3s ease; }
+    .template-card:hover { transform: scale(1.05) translateY(-8px); box-shadow: var(--glow-cyan); }
+    .template-card__preview { width: 100%; height: 180px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; position: relative; }
+    .template-card__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+    .template-card:hover .template-card__overlay { opacity: 1; }
+    .template-card__overlay-text { padding: 12px 24px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 30px; font-weight: 600; color: var(--bg-primary); }
+    .template-card__info { padding: 20px; }
+    .template-card__name { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .template-card__desc { font-size: 13px; color: var(--text-secondary); }
+    .template-card__tags { display: flex; gap: 8px; margin-top: 12px; }
+    .template-card__tag { padding: 4px 10px; border-radius: 12px; font-size: 11px; background: rgba(0,245,255,0.1); color: var(--accent-cyan); border: 1px solid rgba(0,245,255,0.2); }
+    .designer-section { padding: 60px 0; display: none; }
+    .designer-section.active { display: block; }
+    .designer-container { display: grid; grid-template-columns: 220px 1fr 220px; gap: 20px; background: var(--bg-card); border: var(--border-glow); border-radius: var(--border-radius); padding: 24px; min-height: 600px; }
+    @media (max-width: 1024px) { .designer-container { grid-template-columns: 1fr; } }
+    .element-panel, .property-panel { background: var(--bg-secondary); border-radius: var(--border-radius-sm); padding: 16px; }
+    .panel-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; color: var(--accent-cyan); text-transform: uppercase; }
+    .element-item { display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; cursor: grab; margin-bottom: 8px; transition: all 0.15s; }
+    .element-item:hover { border-color: var(--accent-cyan); background: rgba(0,245,255,0.05); }
+    .element-item__icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(0,245,255,0.1); border-radius: 6px; }
+    .canvas-area { background: var(--bg-secondary); border-radius: var(--border-radius-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+    .canvas-container { position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border-radius: 8px; overflow: hidden; }
+    #designCanvas { background: white; cursor: crosshair; }
+    .export-bar { display: flex; gap: 12px; justify-content: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+    .export-btn { display: flex; align-items: center; gap: 8px; padding: 12px 24px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border: none; border-radius: 8px; color: var(--bg-primary); font-weight: 600; cursor: pointer; }
+    .export-btn:hover { transform: translateY(-2px); box-shadow: var(--glow-cyan); }
+    .export-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .export-btn .spinner { width: 16px; height: 16px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 1s linear infinite; display: none; }
+    .export-btn.loading .spinner { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .back-btn { position: fixed; top: 100px; left: 24px; z-index: 100; padding: 12px 20px; background: var(--bg-card); border: var(--border-glow); border-radius: 50px; color: var(--text-primary); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+    .back-btn:hover { background: rgba(0,245,255,0.1); border-color: var(--accent-cyan); box-shadow: var(--glow-cyan); }
+    .irene-mood { position: fixed; bottom: 30px; right: 30px; z-index: 99; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: floatExpression 4s ease-in-out infinite; }
+    @keyframes floatExpression { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .irene-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta)); display: flex; align-items: center; justify-content: center; font-size: 40px; box-shadow: var(--glow-cyan); cursor: pointer; }
+    .irene-bubble { background: var(--bg-card); border: var(--border-glow); border-radius: 16px; padding: 12px 16px; font-size: 13px; color: var(--text-secondary); max-width: 200px; text-align: center; opacity: 0; transform: translateY(10px); transition: all 0.3s; position: absolute; bottom: 100px; }
+    .irene-mood:hover .irene-bubble { opacity: 1; transform: translateY(0); }
+    .property-input { width: 100%; padding: 10px; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: var(--text-primary); margin-bottom: 10px; }
+    .color-picker { display: flex; gap: 8px; flex-wrap: wrap; }
+    .color-option { width: 28px; height: 28px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; }
+    .color-option:hover, .color-option.active { border-color: white; transform: scale(1.1); }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <a href="../index.html" class="back-btn">返回首页</a>
+  
+  <main class="container">
+    <header class="skill-header">
+      <div class="skill-icon-large">🎨</div>
+      <h1 class="skill-title">Canvas Design</h1>
+      <p class="skill-subtitle">商业海报、信息图设计 - 拖拽式设计工具</p>
+    </header>
+
+    <!-- Template Selector -->
+    <section class="template-section" id="templateSection">
+      <h2 class="section-title">选择设计模板</h2>
+      <div class="template-grid" id="templateGrid">
+        <!-- Templates will be generated by JS -->
+      </div>
+    </section>
+
+    <!-- Designer Interface -->
+    <section class="designer-section" id="designerSection">
+      <h2 class="section-title">设计器</h2>
+      <div class="designer-container">
+        <!-- Left: Element Panel -->
+        <div class="element-panel">
+          <div class="panel-title">元素</div>
+          <div class="element-group">
+            <span class="element-group__label">文字</span>
+            <div class="element-item" data-type="text" data-subtype="heading">
+              <div class="element-item__icon">T</div>
+              <span class="element-item__name">标题</span>
+            </div>
+            <div class="element-item" data-type="text" data-subtype="body">
+              <div class="element-item__icon">¶</div>
+              <span class="element-item__name">正文</span>
+            </div>
+          </div>
+          <div class="element-group">
+            <span class="element-group__label">形状</span>
+            <div class="element-item" data-type="shape" data-subtype="rect">
+              <div class="element-item__icon">▭</div>
+              <span class="element-item__name">矩形</span>
+            </div>
+            <div class="element-item" data-type="shape" data-subtype="circle">
+              <div class="element-item__icon">○</div>
+              <span class="element-item__name">圆形</span>
+            </div>
+            <div class="element-item" data-type="shape" data-subtype="line">
+              <div class="element-item__icon">─</div>
+              <span class="element-item__name">线条</span>
+            </div>
+          </div>
+          <div class="element-group">
+            <span class="element-group__label">图片</span>
+            <div class="element-item" data-type="image" data-subtype="placeholder">
+              <div class="element-item__icon">🖼</div>
+              <span class="element-item__name">占位图</span>
+            </div>
+          </div>
+          <button class="export-btn" onclick="backToTemplates()" style="width: 100%; margin-top: 20px;">
+            ← 返回模板
+          </button>
+        </div>
+
+        <!-- Center: Canvas Area -->
+        <div class="canvas-area">
+          <div class="canvas-container">
+            <canvas id="designCanvas" width="600" height="400"></canvas>
+          </div>
+          <span class="canvas-size-label">600 x 400 px</span>
+          <div class="export-bar">
+            <button class="export-btn" id="exportPngBtn">
+              <span class="spinner"></span>
+              <span class="btn-text">📷 导出 PNG</span>
+            </button>
+            <button class="export-btn" id="exportPdfBtn">
+              <span class="spinner"></span>
+              <span class="btn-text">📄 导出 PDF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Property Panel -->
+        <div class="property-panel">
+          <div class="panel-title">属性</div>
+          <div class="property-group">
+            <span class="element-group__label">文字内容</span>
+            <input type="text" class="property-input" id="textContent" placeholder="输入文字...">
+          </div>
+          <div class="property-group">
+            <span class="element-group__label">字体大小</span>
+            <input type="range" class="property-input" id="fontSize" min="12" max="72" value="24">
+          </div>
+          <div class="property-group">
+            <span class="element-group__label">颜色</span>
+            <div class="color-picker" id="colorPicker">
+              <div class="color-option active" style="background: #000000;" data-color="#000000"></div>
+              <div class="color-option" style="background: #ff6b6b;" data-color="#ff6b6b"></div>
+              <div class="color-option" style="background: #00f5ff;" data-color="#00f5ff"></div>
+              <div class="color-option" style="background: #ff00aa;" data-color="#ff00aa"></div>
+              <div class="color-option" style="background: #a855f7;" data-color="#a855f7"></div>
+              <div class="color-option" style="background: #22c55e;" data-color="#22c55e"></div>
+              <div class="color-option" style="background: #f59e0b;" data-color="#f59e0b"></div>
+              <div class="color-option" style="background: #ffffff;" data-color="#ffffff"></div>
+            </div>
+          </div>
+          <div class="property-group">
+            <span class="element-group__label">背景色</span>
+            <div class="color-picker" id="bgColorPicker">
+              <div class="color-option active" style="background: #ffffff;" data-color="#ffffff"></div>
+              <div class="color-option" style="background: #0a0a0f;" data-color="#0a0a0f"></div>
+              <div class="color-option" style="background: #ff6b6b;" data-color="#ff6b6b"></div>
+              <div class="color-option" style="background: #00f5ff;" data-color="#00f5ff"></div>
+              <div class="color-option" style="background: linear-gradient(135deg, #ff6b6b, #ff00aa);" data-color="gradient1"></div>
+              <div class="color-option" style="background: linear-gradient(135deg, #00f5ff, #a855f7);" data-color="gradient2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Irene Mood -->
+  <div class="irene-mood">
+    <div class="irene-avatar" id="ireneAvatar">😸</div>
+    <div class="irene-bubble">试试拖拽元素到画布上吧！</div>
+  </div>
+
+  <script src="../js/demos/canvas-design-demo.js"></script>
+</body>
+</html>

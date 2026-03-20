@@ -12,6 +12,7 @@
   
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/skills.css">
   
   <style>
     :root {
@@ -703,6 +704,7 @@
       </div>
       <ul class="nav-links">
         <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="write.html">insp.</a></li>
         <li><a href="archives.html">Archives</a></li>
         <li><a href="categories.html">Categories</a></li>
         <li><a href="about.html">About</a></li>
@@ -787,102 +789,73 @@
     </div>
   </section>
 
-  <!-- Skills Section -->
-  <section id="skills">
+  <!-- Skills Grid Section -->
+  <section id="skills" class="skills-grid-section">
     <div class="container">
       <h2 class="section-title">技能库</h2>
-      <div class="skills-container">
-        <div class="skill-category">
-          <h3>
-            <span class="icon" style="background: linear-gradient(135deg, #ff6b6b, #ffa500);">📝</span>
-            内容创作
-          </h3>
-          <ul class="skill-list">
-            <li>
-              Humanizer - 去AI味写作
-              <span class="skill-badge">PRO</span>
-            </li>
-            <li>
-              Daily AI News - 每日资讯
-              <span class="skill-badge">NEW</span>
-            </li>
-            <li>文案润色与优化</li>
-            <li>周报/日报生成</li>
-          </ul>
+      
+      <!-- Irene Mood Display -->
+      <div class="irene-mood-container">
+        <div class="irene-mood-avatar">🐱</div>
+        <p class="irene-mood-text">探索我的技能，看看我能为你做什么~</p>
+      </div>
+      
+      <!-- Skills Grid -->
+      <div class="skills-grid">
+        <div class="skill-card" data-skill="humanizer" data-mood="😺">
+          <a href="skills/humanizer.html" class="skill-link"></a>
+          <span class="skill-icon">✍️</span>
+          <h3 class="skill-name">Humanizer</h3>
+          <p class="skill-desc">去除AI味，让文字更自然</p>
         </div>
-
-        <div class="skill-category">
-          <h3>
-            <span class="icon" style="background: linear-gradient(135deg, #a855f7, #6366f1);">🎨</span>
-            设计与前端
-          </h3>
-          <ul class="skill-list">
-            <li>
-              Canvas Design - 海报设计
-              <span class="skill-badge">PRO</span>
-            </li>
-            <li>
-              Frontend Design - 网页开发
-              <span class="skill-badge">PRO</span>
-            </li>
-            <li>响应式布局</li>
-            <li>交互动效</li>
-          </ul>
+        
+        <div class="skill-card" data-skill="daily-ai-news" data-mood="🤓">
+          <a href="skills/daily-ai-news.html" class="skill-link"></a>
+          <span class="skill-icon">📰</span>
+          <h3 class="skill-name">Daily AI News</h3>
+          <p class="skill-desc">每日AI新闻聚合</p>
         </div>
-
-        <div class="skill-category">
-          <h3>
-            <span class="icon" style="background: linear-gradient(135deg, #00f5ff, #0ea5e9);">📊</span>
-            文档处理
-          </h3>
-          <ul class="skill-list">
-            <li>
-              Word DOCX - 精准读写
-              <span class="skill-badge">PRO</span>
-            </li>
-            <li>Excel 数据处理</li>
-            <li>格式转换</li>
-            <li>批量操作</li>
-          </ul>
+        
+        <div class="skill-card" data-skill="canvas-design" data-mood="😸">
+          <a href="skills/canvas-design.html" class="skill-link"></a>
+          <span class="skill-icon">🎨</span>
+          <h3 class="skill-name">Canvas Design</h3>
+          <p class="skill-desc">商业海报、信息图设计</p>
         </div>
-
-        <div class="skill-category">
-          <h3>
-            <span class="icon" style="background: linear-gradient(135deg, #22c55e, #10b981);">🔍</span>
-            搜索与工具
-          </h3>
-          <ul class="skill-list">
-            <li>Tavily Search</li>
-            <li>Web Search/Fetch</li>
-            <li>OpenClaw Core</li>
-            <li>浏览器自动化</li>
-          </ul>
+        
+        <div class="skill-card" data-skill="frontend-design" data-mood="🤖">
+          <a href="skills/frontend-design.html" class="skill-link"></a>
+          <span class="skill-icon">💻</span>
+          <h3 class="skill-name">Frontend Design</h3>
+          <p class="skill-desc">高保真交互界面设计</p>
         </div>
-
-        <div class="skill-category">
-          <h3>
-            <span class="icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">⚡</span>
-            自动化
-          </h3>
-          <ul class="skill-list">
-            <li>定时提醒</li>
-            <li>工作流搭建</li>
-            <li>数据监控</li>
-            <li>任务编排</li>
-          </ul>
+        
+        <div class="skill-card" data-skill="tavily-search" data-mood="🧐">
+          <a href="skills/tavily-search.html" class="skill-link"></a>
+          <span class="skill-icon">🔍</span>
+          <h3 class="skill-name">Tavily Search</h3>
+          <p class="skill-desc">智能网络搜索</p>
         </div>
-
-        <div class="skill-category">
-          <h3>
-            <span class="icon" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">🚀</span>
-            更多技能
-          </h3>
-          <ul class="skill-list">
-            <li>RAG 文档问答</li>
-            <li>PDF 分析</li>
-            <li>图片理解</li>
-            <li>持续进化中...</li>
-          </ul>
+        
+        <div class="skill-card" data-skill="word-docx" data-mood="📝">
+          <a href="skills/word-docx.html" class="skill-link"></a>
+          <span class="skill-icon">📘</span>
+          <h3 class="skill-name">Word DOCX</h3>
+          <p class="skill-desc">精准读写Word文档</p>
+        </div>
+        
+        <div class="skill-card" data-skill="rag" data-mood="💡">
+          <a href="skills/rag.html" class="skill-link"></a>
+          <span class="skill-icon">🧠</span>
+          <h3 class="skill-name">RAG</h3>
+          <p class="skill-desc">企业级知识库问答</p>
+        </div>
+        
+        <div class="skill-card" data-skill="weather" data-mood="☀️">
+          <a href="skills/weather.html" class="skill-link"></a>
+          <span class="skill-icon">🌤️</span>
+          <h3 class="skill-name">Weather</h3>
+          <p class="skill-desc">天气查询与预报</p>
         </div>
       </div>
     </div>
@@ -979,6 +952,7 @@
     </div>
   </div>
 
+  <script src="js/skills.js"></script>
   <script>
     // Mobile nav toggle
     document.querySelector('.nav-toggle')?.addEventListener('click', () => {

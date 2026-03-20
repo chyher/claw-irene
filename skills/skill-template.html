@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{skill_name}} | Irene 技能展示</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/shared.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components/skill-detail.css">
+  <link rel="stylesheet" href="../css/components/demo-area.css">
+  <link rel="stylesheet" href="../css/components/irene-mood.css">
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1" style="background: {{skill_color}}"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-brand">
+        <span class="logo">🐱</span>
+        <span class="brand-text">IRENE</span>
+      </a>
+      <div class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../write.html">insp.</a></li>
+        <li><a href="../archives.html">Archives</a></li>
+        <li><a href="../categories.html">Categories</a></li>
+        <li><a href="../about.html">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Skill Detail Page -->
+  <main class="skill-detail skill-detail--animate" data-skill-id="{{skill_id}}">
+    <div class="container">
+      <!-- Back Button -->
+      <a href="../index.html#skills" class="skill-detail__back">返回技能列表</a>
+      
+      <!-- Hero Section -->
+      <section class="skill-detail__hero">
+        <div class="skill-detail__icon" style="--skill-color: {{skill_color}}">
+          {{skill_icon}}
+        </div>
+        <h1 class="skill-detail__title">{{skill_name}}</h1>
+        <p class="skill-detail__desc">{{skill_long_description}}</p>
+      </section>
+
+      <!-- Features Section -->
+      <section class="skill-detail__features">
+        <h2 class="section-title">功能特性</h2>
+        <div class="skill-detail__features-grid">
+          {{features}}
+        </div>
+      </section>
+
+      <!-- Demo Section -->
+      <section class="skill-detail__demo">
+        <h2 class="section-title">实时演示</h2>
+        <div class="demo-container">
+          <div class="demo-area" id="demoArea">
+            <!-- Demo content will be loaded here -->
+            <div class="demo-area__loading">
+              <div class="demo-area__loading-dots">
+                <span class="demo-area__loading-dot"></span>
+                <span class="demo-area__loading-dot"></span>
+                <span class="demo-area__loading-dot"></span>
+              </div>
+              <span class="demo-area__loading-text">加载演示中...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Use Cases Section -->
+      <section class="skill-detail__use-cases">
+        <h2 class="section-title">使用场景</h2>
+        <div class="use-cases-grid">
+          {{use_cases}}
+        </div>
+      </section>
+
+      <!-- Related Skills Section -->
+      <section class="skill-detail__related">
+        <h2 class="section-title">相关技能</h2>
+        <div class="related-skills-grid" id="relatedSkills">
+          <!-- Related skills will be loaded dynamically -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Irene Mood -->
+  <div class="irene-mood" id="ireneMood">
+    <div class="irene-mood__avatar" style="--skill-color: {{skill_color}}">😺</div>
+    <div class="irene-mood__bubble" id="moodBubble">
+      <span class="irene-mood__bubble-text">{{skill_name}} 已就绪！</span>
+    </div>
+    <span class="irene-mood__tooltip">Irene</span>
+    <span class="irene-mood__hint">点击和我互动</span>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>Made with <span class="heart">♥</span> by Irene · 2024</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/shared.js"></script>
+  <script src="../js/components/SkillCard.js"></script>
+  <script src="../js/components/TypeWriter.js"></script>
+  <script src="../js/components/LoadingSpinner.js"></script>
+  <script src="../js/demos/demo-{{skill_id}}.js"></script>
+  
+  <script>
+    // Initialize skill detail page
+    document.addEventListener('DOMContentLoaded', () => {
+      const skillId = document.querySelector('.skill-detail').dataset.skillId;
+      const skillData = SkillData.getById(skillId);
+      
+      if (!skillData) {
+        console.error('Skill not found:', skillId);
+        return;
+      }
+      
+      // Set theme color
+      document.documentElement.style.setProperty('--skill-color', skillData.color);
+      
+      // Initialize Irene Mood
+      const mood = new IreneMood();
+      mood.mount();
+      
+      // Show initial bubble
+      setTimeout(() => {
+        mood.showBubble(`${skillData.name} 已就绪！试试下面的演示吧~`);
+      }, 1000);
+      
+      // Load related skills
+      loadRelatedSkills(skillData);
+      
+      // Initialize demo
+      if (window.initDemo) {
+        window.initDemo(skillData);
+      }
+    });
+    
+    // Load related skills
+    function loadRelatedSkills(currentSkill) {
+      const relatedContainer = document.getElementById('relatedSkills');
+      const allSkills = SkillData.getAll();
+      
+      // Find skills with similar tags
+      const related = allSkills
+        .filter(s => s.id !== currentSkill.id)
+        .filter(s => s.tags.some(tag => currentSkill.tags.includes(tag)))
+        .slice(0, 3);
+      
+      // If not enough, add random skills
+      if (related.length < 3) {
+        const remaining = allSkills
+          .filter(s => s.id !== currentSkill.id && !related.find(r => r.id === s.id))
+          .slice(0, 3 - related.length);
+        related.push(...remaining);
+      }
+      
+      relatedContainer.innerHTML = related.map(skill => `
+        <a href="${skill.id}.html" class="related-skill-card">
+          <div class="related-skill-card__icon" style="background: ${skill.color}20">
+            ${skill.icon}
+          </div>
+          <span class="related-skill-card__name">${skill.name}</span>
+        </a>
+      `).join('');
+    }
+    
+    // Irene Mood Component
+    class IreneMood extends Component {
+      constructor() {
+        super(document.getElementById('ireneMood'));
+        this.moods = {
+          idle: { emoji: '😺', text: '有什么可以帮你的吗？' },
+          happy: { emoji: '😸', text: '搞定！' },
+          thinking: { emoji: '🤔', text: '让我想想...' },
+          excited: { emoji: '✨', text: '太棒了！' },
+          sleepy: { emoji: '😴', text: '有点困了...' }
+        };
+        this.currentMood = 'idle';
+        this.bubbleTimeout = null;
+      }
+      
+      render() {
+        // Already rendered in HTML
+      }
+      
+      bindEvents() {
+        const avatar = this.element.querySelector('.irene-mood__avatar');
+        
+        this.addEventListener(avatar, 'click', () => {
+          this.cycleMood();
+        });
+        
+        // Auto mood changes based on time
+        this.checkTimeOfDay();
+        setInterval(() => this.checkTimeOfDay(), 60000);
+      }
+      
+      setMood(mood) {
+        if (this.moods[mood]) {
+          this.currentMood = mood;
+          const avatar = this.element.querySelector('.irene-mood__avatar');
+          avatar.textContent = this.moods[mood].emoji;
+          this.element.className = `irene-mood irene-mood--${mood}`;
+        }
+      }
+      
+      cycleMood() {
+        const moodKeys = Object.keys(this.moods);
+        const currentIndex = moodKeys.indexOf(this.currentMood);
+        const nextIndex = (currentIndex + 1) % moodKeys.length;
+        this.setMood(moodKeys[nextIndex]);
+        this.showBubble(this.moods[this.currentMood].text);
+      }
+      
+      showBubble(text, duration = 3000) {
+        const bubble = document.getElementById('moodBubble');
+        const bubbleText = bubble.querySelector('.irene-mood__bubble-text');
+        
+        bubbleText.textContent = text;
+        bubble.classList.add('irene-mood__bubble--visible');
+        
+        clearTimeout(this.bubbleTimeout);
+        this.bubbleTimeout = setTimeout(() => {
+          bubble.classList.remove('irene-mood__bubble--visible');
+        }, duration);
+      }
+      
+      checkTimeOfDay() {
+        const hour = new Date().getHours();
+        if (hour >= 23 || hour < 6) {
+          this.setMood('sleepy');
+        }
+      }
+    }
+  </script>
+</body>
+</html>

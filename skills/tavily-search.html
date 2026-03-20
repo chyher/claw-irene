@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tavily Search | Irene 技能展示</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="../css/shared.css">
+  <link rel="stylesheet" href="../css/skill-detail.css">
+  
+  <style>
+    /* Tavily Search 特定样式 */
+    
+    /* 搜索区域 */
+    .search-section {
+      max-width: 800px;
+      margin: 0 auto 48px;
+    }
+    
+    .search-box {
+      position: relative;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .search-input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 18px 24px 18px 56px;
+      background: var(--bg-card);
+      border: 2px solid rgba(0, 245, 255, 0.2);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      font-size: 16px;
+      font-family: var(--font-body);
+      transition: all var(--duration-normal) var(--ease-out-expo);
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 30px rgba(0, 245, 255, 0.3), inset 0 0 20px rgba(0, 245, 255, 0.05);
+    }
+    
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: var(--text-muted);
+      transition: color var(--duration-normal);
+      pointer-events: none;
+    }
+    
+    .search-input:focus ~ .search-icon {
+      color: var(--accent-cyan);
+    }
+    
+    .search-btn {
+      padding: 18px 32px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      border: none;
+      border-radius: var(--border-radius);
+      color: var(--bg-primary);
+      font-size: 16px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--ease-out-expo);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    
+    .search-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
+    }
+    
+    .search-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .search-btn.loading {
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-magenta));
+    }
+    
+    /* 加载动画 */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 48px 0;
+    }
+    
+    .loading-spinner.active {
+      display: block;
+    }
+    
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(0, 245, 255, 0.2);
+      border-top-color: var(--accent-cyan);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    /* 搜索结果 */
+    .search-results {
+      display: none;
+    }
+    
+    .search-results.active {
+      display: block;
+    }
+    
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .results-count {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .results-count strong {
+      color: var(--accent-cyan);
+    }
+    
+    .copy-all-btn {
+      padding: 8px 16px;
+      background: transparent;
+      border: var(--border-glow);
+      border-radius: var(--border-radius-sm);
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all var(--duration-normal);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .copy-all-btn:hover {
+      background: rgba(0, 245, 255, 0.1);
+      border-color: var(--accent-cyan);
+      color: var(--text-primary);
+    }
+    
+    .copy-all-btn.copied {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+    
+    /* 结果卡片 */
+    .result-card {
+      background: var(--bg-card);
+      border: var(--border-subtle);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: all var(--duration-normal) var(--ease-out-expo);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s var(--ease-out-expo) forwards;
+    }
+    
+    .result-card:nth-child(1) { animation-delay: 0.1s; }
+    .result-card:nth-child(2) { animation-delay: 0.2s; }
+    .result-card:nth-child(3) { animation-delay: 0.3s; }
+    .result-card:nth-child(4) { animation-delay: 0.4s; }
+    .result-card:nth-child(5) { animation-delay: 0.5s; }
+    .result-card:nth-child(6) { animation-delay: 0.6s; }
+    
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .result-card:hover {
+      border-color: var(--accent-cyan);
+      box-shadow: var(--glow-cyan);
+      transform: translateY(-4px);
+    }
+    
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 16px;
+    }
+    
+    .result-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      transition: color var(--duration-fast);
+      line-height: 1.4;
+    }
+    
+    .result-title:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+    
+    .result-score {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(0, 245, 255, 0.1);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--accent-cyan);
+      white-space: nowrap;
+    }
+    
+    .score-value {
+      font-weight: 700;
+    }
+    
+    .result-source {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    
+    .source-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+    
+    .result-snippet {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    
+    .result-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .result-btn {
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius-sm);
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all var(--duration-normal);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .result-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--text-primary);
+      background: rgba(0, 245, 255, 0.1);
+    }
+    
+    .result-btn.copied {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+    
+    /* 功能特性卡片 */
+  </style>
+</head>
+<body>
+  <!-- Back Button -->
+  <a href="../index.html" class="back-button">返回首页</a>
+
+  <main class="skill-detail-page">
+    <header class="skill-header">
+      <div class="skill-icon-large" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.2), rgba(168, 85, 247, 0.2));">🔍</div>
+      <h1 class="skill-title">Tavily Search</h1>
+      <p class="skill-subtitle">智能网络搜索，无需信用卡</p>
+      <div class="skill-badges"><span class="skill-badge pro">PRO</span><span class="skill-badge new">搜索</span></div>
+    </header>
+    <div class="container">
+      <section class="section">
+        <h2 class="section-title">实时演示</h2>
+        <div class="search-section">
+          <div class="search-box">
+            <div class="search-input-wrapper">
+              <input type="text" class="search-input" id="searchInput" placeholder="输入搜索关键词，例如：OpenClaw AI助手框架...">
+              <span class="search-icon">🔍</span>
+            </div>
+            <button class="search-btn" id="searchBtn"><span>🔍</span><span>搜索</span></button>
+          </div>
+          <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p class="loading-text">正在搜索中...</p>
+          </div>
+          <div class="search-results" id="searchResults">
+            <div class="results-header">
+              <span class="results-count">找到 <strong id="resultCount">6</strong> 个结果</span>
+              <button class="copy-all-btn" id="copyAllBtn"><span>📋</span><span>复制全部</span></button>
+            </div>
+            <div id="resultsContainer"></div>
+          </div>
+        </div>
+      </section>
+      <div class="stats-bar">
+        <div class="stat-item"><div class="stat-value">1000</div><div class="stat-label">每月免费查询</div></div>
+        <div class="stat-item"><div class="stat-value">95%</div><div class="stat-label">结果相关性</div></div>
+        <div class="stat-item"><div class="stat-value">&lt;1s</div><div class="stat-label">平均响应时间</div></div>
+      </div>
+      <section class="section">
+        <h2 class="section-title">功能特性</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <h3 class="feature-title">AI增强搜索</h3>
+            <p class="feature-desc">智能理解查询意图，不仅匹配关键词，更理解你的真实需求</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⭐</div>
+            <h3 class="feature-title">高质量结果</h3>
+            <p class="feature-desc">自动过滤低质量内容，只返回权威、可信的信息源</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h3 class="feature-title">实时摘要</h3>
+            <p class="feature-desc">自动生成内容摘要，快速了解网页核心信息，无需逐一点击</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💳</div>
+            <h3 class="feature-title">无需信用卡</h3>
+            <p class="feature-desc">每月1000次免费查询额度，零门槛开始使用</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div class="irene-expression" id="ireneMood">
+    <div class="irene-avatar">🧐</div>
+    <div class="irene-bubble"><span>试试搜索，发现更多精彩~</span></div>
+  </div>
+  <footer><div class="container"><p>Made with <span class="heart">♥</span> by Irene · 2024</p></div></footer>
+  <script src="../js/shared.js"></script>
+  <script src="../js/demos/tavily-search-demo.js"></script>
+</body>
+</html>

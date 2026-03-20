@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frontend Design | Irene 技能展示</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/shared.css">
+  <link rel="stylesheet" href="../css/skill-detail.css">
+  <style>
+    :root { --theme-cyan: #00f5ff; --theme-purple: #a855f7; --theme-pink: #ff00aa; --current-theme: var(--theme-cyan); --border-radius-custom: 16px; }
+    [data-theme="cyan"] { --current-theme: var(--theme-cyan); }
+    [data-theme="purple"] { --current-theme: var(--theme-purple); }
+    [data-theme="pink"] { --current-theme: var(--theme-pink); }
+    [data-mode="light"] { --bg-primary: #f5f5fa; --bg-secondary: #ffffff; --bg-card: rgba(255,255,255,0.9); --text-primary: #1a1a2e; --text-secondary: #4a4a6a; --border-glow: 1px solid rgba(0,245,255,0.2); }
+    .demo-workspace { background: var(--bg-secondary); border-radius: var(--border-radius); border: var(--border-glow); overflow: hidden; margin: var(--space-xl) 0; }
+    .theme-controls { display: flex; gap: var(--space-md); padding: var(--space-md) var(--space-lg); background: var(--bg-card); border-bottom: var(--border-glow); flex-wrap: wrap; align-items: center; }
+    .control-group { display: flex; align-items: center; gap: var(--space-sm); }
+    .control-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+    .theme-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: all 0.3s ease; }
+    .theme-btn:hover { transform: scale(1.1); }
+    .theme-btn.active { border-color: var(--text-primary); }
+    .theme-btn.cyan { background: var(--theme-cyan); }
+    .theme-btn.purple { background: var(--theme-purple); }
+    .theme-btn.pink { background: var(--theme-pink); }
+    .mode-toggle { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-xs) var(--space-md); background: var(--bg-primary); border-radius: 20px; cursor: pointer; transition: all 0.3s ease; }
+    .mode-toggle:hover { background: var(--bg-hover); }
+    .radius-slider { width: 100px; height: 4px; -webkit-appearance: none; background: var(--bg-hover); border-radius: 2px; outline: none; }
+    .radius-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--current-theme); cursor: pointer; transition: transform 0.2s ease; }
+    .radius-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    .component-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-lg); padding: var(--space-xl); }
+    @media (max-width: 768px) { .component-gallery { grid-template-columns: repeat(2, 1fr); padding: var(--space-md); } }
+    @media (max-width: 480px) { .component-gallery { grid-template-columns: 1fr; } }
+    .component-card { background: var(--bg-card); border: var(--border-glow); border-radius: var(--border-radius-custom); padding: var(--space-lg); cursor: pointer; transition: all 0.3s var(--ease-out-expo); position: relative; overflow: hidden; }
+    .component-card:hover { border-color: var(--current-theme); box-shadow: 0 0 30px rgba(0,245,255,0.2); transform: translateY(-4px); }
+    .component-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--current-theme), transparent); opacity: 0; transition: opacity 0.3s ease; }
+    .component-card:hover::before { opacity: 1; }
+    .component-preview { min-height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-md); }
+    .component-name { font-size: 14px; font-weight: 600; color: var(--text-primary); text-align: center; }
+    .component-desc { font-size: 12px; color: var(--text-secondary); text-align: center; margin-top: var(--space-xs); }
+    .live-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 400px; }
+    @media (max-width: 768px) { .live-preview { grid-template-columns: 1fr; } }
+    .code-panel { background: #0d1117; border-right: 1px solid rgba(255,255,255,0.1); padding: var(--space-lg); position: relative; }
+    .code-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); }
+    .code-title { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+    .copy-btn { padding: var(--space-xs) var(--space-sm); background: rgba(0,245,255,0.1); border: 1px solid rgba(0,245,255,0.3); border-radius: 6px; color: var(--accent-cyan); font-size: 12px; cursor: pointer; transition: all 0.3s ease; }
+    .copy-btn:hover { background: rgba(0,245,255,0.2); box-shadow: 0 0 10px rgba(0,245,255,0.3); }
+    .copy-btn.copied { background: rgba(34,197,94,0.2); border-color: var(--accent-green); color: var(--accent-green); }
+    .code-editor { width: 100%; min-height: 300px; background: transparent; border: none; color: #e6edf3; font-family: 'Fira Code', monospace; font-size: 13px; line-height: 1.6; resize: vertical; outline: none; }
+    .preview-panel { background: var(--bg-primary); padding: var(--space-xl); display: flex; align-items: center; justify-content: center; position: relative; }
+    .preview-content { width: 100%; max-width: 400px; }
+    .neon-btn { padding: 14px 32px; background: transparent; border: 2px solid var(--current-theme); border-radius: var(--border-radius-sm); color: var(--current-theme); font-size: 14px; font-weight: 600; cursor: pointer; position: relative; overflow: hidden; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 2px; }
+    .neon-btn:hover { background: var(--current-theme); color: var(--bg-primary); box-shadow: 0 0 30px var(--current-theme), 0 0 60px var(--current-theme); }
+    .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--border-radius-custom); padding: var(--space-lg); transition: all 0.3s ease; }
+    .glass-card:hover { background: rgba(255,255,255,0.1); border-color: var(--current-theme); transform: translateY(-4px); }
+    .gradient-text { font-size: 24px; font-weight: 700; background: linear-gradient(90deg, var(--current-theme), var(--theme-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .pulse-loader { width: 60px; height: 60px; border-radius: 50%; background: var(--current-theme); animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } }
+    .toggle-switch { position: relative; width: 60px; height: 32px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-hover); border-radius: 32px; transition: 0.3s; }
+    .toggle-slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background: white; border-radius: 50%; transition: 0.3s; }
+    .toggle-switch input:checked + .toggle-slider { background: var(--current-theme); }
+    .toggle-switch input:checked + .toggle-slider:before { transform: translateX(28px); }
+    .animated-input { width: 100%; padding: 16px; background: var(--bg-card); border: 2px solid transparent; border-radius: var(--border-radius-sm); color: var(--text-primary); font-size: 14px; transition: all 0.3s ease; outline: none; }
+    .animated-input:focus { border-color: var(--current-theme); box-shadow: 0 0 20px rgba(0,245,255,0.3); }
+    .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); border: var(--border-glow); border-radius: var(--border-radius-sm); padding: var(--space-md) var(--space-xl); color: var(--text-primary); font-size: 14px; opacity: 0; transition: all 0.3s ease; z-index: 1000; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .skill-icon-large.frontend { background: linear-gradient(135deg, var(--theme-cyan), var(--theme-purple)); }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="top: 10%; left: 10%; background: var(--theme-cyan); opacity: 0.15;"></div>
+  <div class="bg-glow" style="bottom: 10%; right: 10%; background: var(--theme-purple); opacity: 0.15;"></div>
+
+  <a href="../index.html#skills" class="back-button">返回</a>
+
+  <main class="skill-detail-page">
+    <div class="container">
+      <header class="skill-header">
+        <div class="skill-icon-large frontend">💻</div>
+        <h1 class="skill-title">Frontend Design</h1>
+        <p class="skill-subtitle">高保真交互界面设计</p>
+        <div class="skill-badges">
+          <span class="skill-badge pro">Pro</span>
+          <span class="skill-badge new">New</span>
+        </div>
+      </header>
+
+      <section class="section">
+        <h2 class="section-title">组件画廊</h2>
+        <div class="demo-workspace">
+          <div class="theme-controls">
+            <div class="control-group">
+              <span class="control-label">主题色:</span>
+              <button class="theme-btn cyan active" data-theme="cyan" title="青色"></button>
+              <button class="theme-btn purple" data-theme="purple" title="紫色"></button>
+              <button class="theme-btn pink" data-theme="pink" title="粉色"></button>
+            </div>
+            <div class="control-group">
+              <span class="control-label">模式:</span>
+              <div class="mode-toggle" id="modeToggle">
+                <span id="modeIcon">🌙</span>
+                <span id="modeText">暗色</span>
+              </div>
+            </div>
+            <div class="control-group">
+              <span class="control-label">圆角:</span>
+              <input type="range" class="radius-slider" id="radiusSlider" min="0" max="32" value="16">
+            </div>
+          </div>
+
+          <div class="component-gallery" id="componentGallery">
+            <div class="component-card" data-component="neon-btn">
+              <div class="component-preview">
+                <button class="neon-btn">NEON</button>
+              </div>
+              <div class="component-name">霓虹按钮</div>
+              <div class="component-desc">发光悬停效果</div>
+            </div>
+            <div class="component-card" data-component="glass-card">
+              <div class="component-preview">
+                <div class="glass-card" style="width: 100px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                  <span style="font-size: 12px;">Glass</span>
+                </div>
+              </div>
+              <div class="component-name">玻璃态卡片</div>
+              <div class="component-desc">毛玻璃背景效果</div>
+            </div>
+            <div class="component-card" data-component="gradient-text">
+              <div class="component-preview">
+                <span class="gradient-text">渐变</span>
+              </div>
+              <div class="component-name">渐变文字</div>
+              <div class="component-desc">CSS渐变填充</div>
+            </div>
+            <div class="component-card" data-component="pulse-loader">
+              <div class="component-preview">
+                <div class="pulse-loader"></div>
+              </div>
+              <div class="component-name">脉冲加载器</div>
+              <div class="component-desc">呼吸动画效果</div>
+            </div>
+            <div class="component-card" data-component="toggle-switch">
+              <div class="component-preview">
+                <label class="toggle-switch">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="component-name">开关组件</div>
+              <div class="component-desc">平滑切换动画</div>
+            </div>
+            <div class="component-card" data-component="animated-input">
+              <div class="component-preview">
+                <input type="text" class="animated-input" placeholder="输入..." style="width: 120px;">
+              </div>
+              <div class="component-name">聚焦动画输入框</div>
+              <div class="component-desc">聚焦发光效果</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">实时预览</h2>
+        <div class="demo-workspace">
+          <div class="live-preview">
+            <div class="code-panel">
+              <div class="code-header">
+                <span class="code-title">HTML/CSS</span>
+                <button class="copy-btn" id="copyBtn">复制代码</button>
+              </div>
+              <textarea class="code-editor" id="codeEditor" spellcheck="false"></textarea>
+            </div>
+            <div class="preview-panel">
+              <div class="preview-content" id="previewContent"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="irene-expression" id="ireneMood">
+    <div class="irene-bubble" id="moodBubble">试试点击组件查看代码！</div>
+    <div class="irene-avatar">🤖</div>
+  </div>
+
+  <div class="toast" id="toast">已复制到剪贴板！</div>
+
+  <script src="../js/demos/frontend-design-demo.js"></script>
+</body>
+</html>

@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAG | Irene 技能展示</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="../css/shared.css">
+  <link rel="stylesheet" href="../css/skill-detail.css">
+  
+  <style>
+    /* RAG 特定样式 */
+    .rag-demo {
+      max-width: 900px;
+      margin: 40px auto;
+    }
+    
+    /* 知识库选择器 */
+    .kb-selector {
+      background: var(--bg-card);
+      border: var(--border-glow);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .kb-label {
+      font-family: var(--font-display);
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .kb-select {
+      flex: 1;
+      min-width: 200px;
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius-sm);
+      color: var(--text-primary);
+      font-size: 15px;
+      cursor: pointer;
+      transition: all var(--duration-normal);
+    }
+    
+    .kb-select:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+    
+    .kb-badge {
+      padding: 6px 12px;
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--accent-cyan);
+    }
+    
+    /* 问答输入区 */
+    .qa-input-area {
+      background: var(--bg-card);
+      border: var(--border-glow);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .qa-input-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .qa-input-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: rgba(168, 85, 247, 0.1);
+    }
+    
+    .qa-input-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    .qa-input-wrapper {
+      position: relative;
+    }
+    
+    .qa-input {
+      width: 100%;
+      padding: 16px 20px;
+      padding-right: 120px;
+      background: var(--bg-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius-sm);
+      color: var(--text-primary);
+      font-size: 16px;
+      transition: all var(--duration-normal);
+    }
+    
+    .qa-input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+    
+    .qa-input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .qa-submit-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 10px 20px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      border: none;
+      border-radius: var(--border-radius-sm);
+      color: var(--bg-primary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--duration-normal);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .qa-submit-btn:hover {
+      transform: translateY(-50%) scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+    }
+    
+    .qa-submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: translateY(-50%);
+    }
+    
+    /* 智能提示 */
+    .smart-suggestions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    
+    .suggestion-chip {
+      padding: 6px 14px;
+      background: rgba(168, 85, 247, 0.1);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--accent-purple);
+      cursor: pointer;
+      transition: all var(--duration-fast);
+    }
+    
+    .suggestion-chip:hover {
+      background: rgba(168, 85, 247, 0.2);
+      border-color: var(--accent-purple);
+    }
+    
+    /* 思考动画 */
+    .thinking-area {
+      background: var(--bg-card);
+      border: var(--border-glow);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      display: none;
+    }
+    
+    .thinking-area.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .thinking-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .thinking-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      background: rgba(245, 158, 11, 0.1);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .thinking-text {
+      font-size: 14px;
+      color: var(--accent-yellow);
+    }
+    
+    .thinking-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .thinking-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--bg-secondary);
+      border-radius: var(--border-radius-sm);
+      font-size: 13px;
+      color: var(--text-secondary);
+      opacity: 0.5;
+      transition: all var(--duration-normal);
+    }
+    
+    .thinking-step.active {
+      opacity: 1;
+      border-left: 3px solid var(--accent-cyan);
+    }
+    
+    .thinking-step.completed {
+      opacity: 0.8;
+      color: var(--accent-green);
+    }
+    
+    .step-icon {
+      font-size: 14px;
+    }
+    
+    /* 答案展示区 */
+    .answer-area {
+      background: var(--bg-card);
+      border: 2px solid rgba(0, 245, 255, 0.3);
+      border-radius: var(--border-radius);
+      padding: 28px;
+      margin-bottom: 24px;
+      display: none;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .answer-area.active {
+      display: block;
+      animation: slideUp 0.5s var(--ease-out-expo);
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .answer-area::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    }
+    
+    .answer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .answer-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+    
+    .confidence-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 20px;
+    }
+    
+    .confidence-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .confidence-value {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent-green);
+    }
+    
+    .confidence-bar {
+      width: 80px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .confidence-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-green), #4ade80);
+      border-radius: 3px;
+      transition: width 1s var(--ease-out-expo);
+    }
+    
+    .answer-content {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-primary);
+      min-height: 60px;
+    }
+    
+    .answer-text {
+      opacity: 0;
+    }
+    
+    .answer-text.typing {
+      opacity: 1;
+    }
+    
+    .typing-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background: var(--accent-cyan);
+      margin-left: 2px;
+      animation: blink 1s infinite;
+      vertical-align: middle;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    
+    /* 引用来源 */
+    .sources-section {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .sources-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .sources-header:hover {
+      color: var(--accent-cyan);
+    }
+    
+    .sources-toggle {
+      transition: transform 0.3s ease;
+    }
+    
+    .sources-toggle.expanded {
+      transform: rotate(180deg);
+    }
+    
+    .sources-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    
+    .sources-list.expanded {
+      max-height: 500px;
+    }
+    
+    .source-item {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg-secondary);
+      border-radius: var(--border-radius-sm);
+      border-left: 3px solid var(--accent-purple);
+      cursor: pointer;
+      transition: all var(--duration-normal);
+    }
+    
+    .source-item:hover {
+      background: rgba(168, 85, 247, 0.1);
+      transform: translateX(4px);
+    }
+    
+    .source-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    
+    .source-content {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .source-doc {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-purple);
+      margin-bottom: 4px;
+    }
+    
+    .source-snippet {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .source-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    
+    /* 相关文档片段 */
+    .snippets-area {
+      background: var(--bg-card);
+      border: var(--border-subtle);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      display: none;
+    }
+    
+    .snippets-area.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .snippets-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .snippets-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: rgba(14, 165, 233, 0.1);
+    }
+    
+    .snippets-title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    .snippets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    
+    .snippet-card {
+      padding: 16px;
+      background: var(--bg-secondary);
+      border-radius: var(--border-radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all var(--duration-normal);
+    }
+    
+    .snippet-card:hover {
+      border-color: rgba(14, 165, 233, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .snippet-source {
+      font-size: 12px;
+      color: var(--accent-blue);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .snippet-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .snippet-score {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .snippet-score-bar {
+      display: inline-block;
+      width: 60px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    
+    .snippet-score-fill {
+      height: 100%;
+      background: var(--accent-blue);
+      border-radius: 2px;
+    }
+    
+    /* 功能特性卡片 */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin: 40px 0;
+    }
+    
+    .feature-card {
+      background: var(--bg-card);
+      border: var(--border-subtle);
+      border-radius: var(--border-radius);
+      padding: 28px;
+      transition: all var(--duration-normal) var(--ease-out-expo);
+    }
+    
+    .feature-card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-4px);
+      box-shadow: var(--glow-cyan);
+    }
+    
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+      background: rgba(0, 245, 255, 0.1);
+    }
+    
+    .feature-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+    
+    .feature-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    
+    /* 统计信息 */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin: 32px 0;
+      padding: 24px;
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      border: var(--border-subtle);
+      flex-wrap: wrap;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--accent-cyan);
+      text-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    
+    /* 使用场景 */
+    .use-cases {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 32px 0;
+    }
+    
+    .use-case-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      border: var(--border-subtle);
+      border-radius: var(--border-radius-sm);
+      transition: all var(--duration-normal);
+    }
+    
+    .use-case-item:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 245, 255, 0.05);
+    }
+    
+    .use-case-icon {
+      font-size: 24px;
+    }
+    
+    .use-case-text {
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+    
+    /* 页脚 */
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    
+    footer .heart {
+      color: var(--accent-magenta);
+    }
+    
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .kb-selector {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .kb-select {
+        width: 100%;
+      }
+      
+      .qa-input {
+        padding-right: 20px;
+        padding-bottom: 60px;
+      }
+      
+      .qa-submit-btn {
+        position: static;
+        transform: none;
+        width: 100%;
+        margin-top: 12px;
+        justify-content: center;
+      }
+      
+      .qa-submit-btn:hover {
+        transform: scale(1.02);
+      }
+      
+      .answer-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .stats-bar {
+        gap: 24px;
+      }
+      
+      .snippets-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="top: 10%; left: 10%; background: radial-gradient(circle, rgba(168, 85, 247, 0.15), transparent 70%);"></div>
+  <div class="bg-glow" style="bottom: 20%; right: 10%; background: radial-gradient(circle, rgba(0, 245, 255, 0.1), transparent 70%);"></div>
+
+  <!-- Back Button -->
+  <a href="../index.html" class="back-button">返回首页</a>
+
+  <!-- Main Content -->
+  <main class="skill-detail-page">
+    <!-- Hero Section -->
+    <header class="skill-header">
+      <div class="skill-icon-large" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(0, 245, 255, 0.2));">
+        🧠
+      </div>
+      <h1 class="skill-title">RAG</h1>
+      <p class="skill-subtitle">企业级知识库问答系统</p>
+      <div class="skill-badges">
+        <span class="skill-badge pro">PRO</span>
+        <span class="skill-badge new">AI</span>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Demo Section -->
+      <section class="section">
+        <h2 class="section-title">实时演示</h2>
+        
+        <div class="rag-demo">
+          <!-- 知识库选择器 -->
+          <div class="kb-selector">
+            <div class="kb-label">
+              <span>📚</span>
+              <span>知识库</span>
+            </div>
+            <select class="kb-select" id="kbSelect">
+              <option value="all">全部知识库</option>
+              <option value="docs">产品文档库</option>
+              <option value="api">API 文档库</option>
+              <option value="faq">常见问题库</option>
+              <option value="internal">内部知识库</option>
+            </select>
+            <span class="kb-badge">4 个知识库</span>
+          </div>
+          
+          <!-- 问答输入区 -->
+          <div class="qa-input-area">
+            <div class="qa-input-header">
+              <div class="qa-input-icon">❓</div>
+              <div class="qa-input-title">输入你的问题</div>
+            </div>
+            <div class="qa-input-wrapper">
+              <input 
+                type="text" 
+                class="qa-input" 
+                id="qaInput"
+                placeholder="例如：OpenClaw 支持哪些消息平台？"
+                autocomplete="off"
+              >
+              <button class="qa-submit-btn" id="qaSubmitBtn">
+                <span>🔍</span>
+                <span>搜索</span>
+              </button>
+            </div>
+            <div class="smart-suggestions" id="smartSuggestions">
+              <span class="suggestion-chip" data-question="OpenClaw 是什么？">OpenClaw 是什么？</span>
+              <span class="suggestion-chip" data-question="如何安装 OpenClaw？">如何安装 OpenClaw？</span>
+              <span class="suggestion-chip" data-question="支持哪些 AI 模型？">支持哪些 AI 模型？</span>
+              <span class="suggestion-chip" data-question="如何创建自定义技能？">如何创建自定义技能？</span>
+            </div>
+          </div>
+          
+          <!-- 思考过程动画 -->
+          <div class="thinking-area" id="thinkingArea">
+            <div class="thinking-header">
+              <div class="thinking-icon">⚡</div>
+              <span class="thinking-text">正在思考...</span>
+            </div>
+            <div class="thinking-steps" id="thinkingSteps">
+              <div class="thinking-step" data-step="1">
+                <span class="step-icon">🔍</span>
+                <span>分析问题语义...</span>
+              </div>
+              <div class="thinking-step" data-step="2">
+                <span class="step-icon">📚</span>
+                <span>检索相关知识库...</span>
+              </div>
+              <div class="thinking-step" data-step="3">
+                <span class="step-icon">🎯</span>
+                <span>匹配最相关文档...</span>
+              </div>
+              <div class="thinking-step" data-step="4">
+                <span class="step-icon">✨</span>
+                <span>生成答案...</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 答案展示区 -->
+          <div class="answer-area" id="answerArea">
+            <div class="answer-header">
+              <div class="answer-title">
+                <span>✨</span>
+                <span>答案</span>
+              </div>
+              <div class="confidence-badge">
+                <span class="confidence-label">置信度</span>
+                <div class="confidence-bar">
+                  <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+                </div>
+                <span class="confidence-value" id="confidenceValue">0%</span>
+              </div>
+            </div>
+            <div class="answer-content" id="answerContent">
+              <span class="answer-text" id="answerText"></span>
+            </div>
+            
+            <!-- 引用来源 -->
+            <div class="sources-section">
+              <div class="sources-header" id="sourcesHeader">
+                <span>📑</span>
+                <span>引用来源</span>
+                <span class="sources-toggle" id="sourcesToggle">▼</span>
+              </div>
+              <div class="sources-list" id="sourcesList">
+                <!-- 动态生成 -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- 相关文档片段 -->
+          <div class="snippets-area" id="snippetsArea">
+            <div class="snippets-header">
+              <div class="snippets-icon">📄</div>
+              <div class="snippets-title">相关文档片段</div>
+            </div>
+            <div class="snippets-grid" id="snippetsGrid">
+              <!-- 动态生成 -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats Section -->
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-value">10K+</div>
+          <div class="stat-label">文档数量</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">&lt;100ms</div>
+          <div class="stat-label">检索延迟</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">94%</div>
+          <div class="stat-label">平均准确率</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">99.9%</div>
+          <div class="stat-label">服务可用性</div>
+        </div>
+      </div>
+
+      <!-- Features Section -->
+      <section class="section">
+        <h2 class="section-title">功能特性</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3 class="feature-title">向量检索</h3>
+            <p class="feature-desc">基于语义相似度搜索，理解问题意图，精准定位相关知识</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📚</div>
+            <h3 class="feature-title">多知识库</h3>
+            <p class="feature-desc">支持多个知识库联合查询，跨领域知识整合，一站式问答</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📑</div>
+            <h3 class="feature-title">答案溯源</h3>
+            <p class="feature-desc">每个回答都有出处，可追溯到原始文档，确保信息可信</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3 class="feature-title">置信度评分</h3>
+            <p class="feature-desc">智能评估答案可靠性，低置信度时主动提示，避免误导</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Use Cases Section -->
+      <section class="section">
+        <h2 class="section-title">使用场景</h2>
+        <div class="use-cases">
+          <div class="use-case-item">
+            <span class="use-case-icon">🏢</span>
+            <span class="use-case-text">企业知识管理</span>
+          </div>
+          <div class="use-case-item">
+            <span class="use-case-icon">📖</span>
+            <span class="use-case-text">产品文档问答</span>
+          </div>
+          <div class="use-case-item">
+            <span class="use-case-icon">🎓</span>
+            <span class="use-case-text">培训资料查询</span>
+          </div>
+          <div class="use-case-item">
+            <span class="use-case-icon">🔧</span>
+            <span class="use-case-text">技术支持助手</span>
+          </div>
+          <div class="use-case-item">
+            <span class="use-case-icon">📋</span>
+            <span class="use-case-text">规章制度查询</span>
+          </div>
+          <div class="use-case-item">
+            <span class="use-case-icon">🔬</span>
+            <span class="use-case-text">研究报告检索</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Irene Expression -->
+  <div class="irene-expression" id="ireneMood">
+    <div class="irene-avatar">💡</div>
+    <div class="irene-bubble">
+      <span>有问题就问知识库，我帮你找答案~</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>Made with <span class="heart">♥</span> by Irene · 2024</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/shared.js"></script>
+  <script src="../js/demos/rag-demo.js"></script>
+</body>
+</html>

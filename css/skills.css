@@ -1,0 +1,358 @@
+/* Skills Grid Section Styles */
+
+/* Skills Section Container */
+.skills-grid-section {
+  padding: 100px 0;
+  position: relative;
+}
+
+/* Irene Mood Display Area */
+.irene-mood-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 60px;
+  padding: 40px;
+  position: relative;
+}
+
+.irene-mood-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: moodPulse 2s ease-in-out infinite;
+}
+
+.irene-mood-avatar::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta), var(--accent-cyan));
+  z-index: -1;
+  animation: rotate 4s linear infinite;
+}
+
+.irene-mood-avatar::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+  filter: blur(20px);
+  opacity: 0.5;
+  z-index: -2;
+}
+
+.irene-mood-avatar.hovered {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 30px rgba(0, 245, 255, 0.8));
+}
+
+@keyframes moodPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.irene-mood-text {
+  margin-top: 20px;
+  font-size: 18px;
+  color: var(--text-secondary);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.irene-mood-text.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Skills Grid Layout */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Tablet: 2 columns */
+@media (max-width: 1024px) {
+  .skills-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+/* Mobile: 1 column */
+@media (max-width: 640px) {
+  .skills-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0 16px;
+  }
+  
+  .skills-grid-section {
+    padding: 60px 0;
+  }
+  
+  .irene-mood-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 40px;
+  }
+}
+
+/* Skill Card Styles */
+.skill-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(0, 245, 255, 0.15);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Staggered fade-in animation */
+.skill-card.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hover glow effect */
+.skill-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-cyan);
+  box-shadow: 
+    0 0 30px rgba(0, 245, 255, 0.3),
+    0 0 60px rgba(0, 245, 255, 0.1),
+    inset 0 0 30px rgba(0, 245, 255, 0.05);
+}
+
+/* Different accent colors for each card */
+.skill-card[data-skill="humanizer"]:hover {
+  border-color: #ff6b6b;
+  box-shadow: 
+    0 0 30px rgba(255, 107, 107, 0.3),
+    0 0 60px rgba(255, 107, 107, 0.1),
+    inset 0 0 30px rgba(255, 107, 107, 0.05);
+}
+
+.skill-card[data-skill="daily-ai-news"]:hover {
+  border-color: #a855f7;
+  box-shadow: 
+    0 0 30px rgba(168, 85, 247, 0.3),
+    0 0 60px rgba(168, 85, 247, 0.1),
+    inset 0 0 30px rgba(168, 85, 247, 0.05);
+}
+
+.skill-card[data-skill="canvas-design"]:hover {
+  border-color: #f59e0b;
+  box-shadow: 
+    0 0 30px rgba(245, 158, 11, 0.3),
+    0 0 60px rgba(245, 158, 11, 0.1),
+    inset 0 0 30px rgba(245, 158, 11, 0.05);
+}
+
+.skill-card[data-skill="frontend-design"]:hover {
+  border-color: #6366f1;
+  box-shadow: 
+    0 0 30px rgba(99, 102, 241, 0.3),
+    0 0 60px rgba(99, 102, 241, 0.1),
+    inset 0 0 30px rgba(99, 102, 241, 0.05);
+}
+
+.skill-card[data-skill="tavily-search"]:hover {
+  border-color: #22c55e;
+  box-shadow: 
+    0 0 30px rgba(34, 197, 94, 0.3),
+    0 0 60px rgba(34, 197, 94, 0.1),
+    inset 0 0 30px rgba(34, 197, 94, 0.05);
+}
+
+.skill-card[data-skill="word-docx"]:hover {
+  border-color: #0ea5e9;
+  box-shadow: 
+    0 0 30px rgba(14, 165, 233, 0.3),
+    0 0 60px rgba(14, 165, 233, 0.1),
+    inset 0 0 30px rgba(14, 165, 233, 0.05);
+}
+
+.skill-card[data-skill="rag"]:hover {
+  border-color: #ec4899;
+  box-shadow: 
+    0 0 30px rgba(236, 72, 153, 0.3),
+    0 0 60px rgba(236, 72, 153, 0.1),
+    inset 0 0 30px rgba(236, 72, 153, 0.05);
+}
+
+.skill-card[data-skill="weather"]:hover {
+  border-color: #fbbf24;
+  box-shadow: 
+    0 0 30px rgba(251, 191, 36, 0.3),
+    0 0 60px rgba(251, 191, 36, 0.1),
+    inset 0 0 30px rgba(251, 191, 36, 0.05);
+}
+
+/* Shine effect on hover */
+.skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.skill-card:hover::before {
+  left: 100%;
+}
+
+/* Skill Icon */
+.skill-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.skill-card:hover .skill-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
+/* Skill Name */
+.skill-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+.skill-card:hover .skill-name {
+  color: var(--accent-cyan);
+}
+
+.skill-card[data-skill="humanizer"]:hover .skill-name { color: #ff6b6b; }
+.skill-card[data-skill="daily-ai-news"]:hover .skill-name { color: #a855f7; }
+.skill-card[data-skill="canvas-design"]:hover .skill-name { color: #f59e0b; }
+.skill-card[data-skill="frontend-design"]:hover .skill-name { color: #6366f1; }
+.skill-card[data-skill="tavily-search"]:hover .skill-name { color: #22c55e; }
+.skill-card[data-skill="word-docx"]:hover .skill-name { color: #0ea5e9; }
+.skill-card[data-skill="rag"]:hover .skill-name { color: #ec4899; }
+.skill-card[data-skill="weather"]:hover .skill-name { color: #fbbf24; }
+
+/* Skill Description */
+.skill-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  transition: color 0.3s ease;
+}
+
+.skill-card:hover .skill-desc {
+  color: var(--text-primary);
+}
+
+/* Skill Link (invisible overlay) */
+.skill-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Fullscreen transition overlay */
+.transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transition-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.transition-content {
+  text-align: center;
+}
+
+.transition-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: transitionPulse 0.6s ease-in-out infinite;
+}
+
+@keyframes transitionPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.transition-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  color: var(--accent-cyan);
+}
+
+/* Ripple effect on click */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0, 245, 255, 0.3);
+  transform: scale(0);
+  animation: rippleEffect 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes rippleEffect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Staggered animation delays */
+.skill-card:nth-child(1) { transition-delay: 0.05s; }
+.skill-card:nth-child(2) { transition-delay: 0.1s; }
+.skill-card:nth-child(3) { transition-delay: 0.15s; }
+.skill-card:nth-child(4) { transition-delay: 0.2s; }
+.skill-card:nth-child(5) { transition-delay: 0.25s; }
+.skill-card:nth-child(6) { transition-delay: 0.3s; }
+.skill-card:nth-child(7) { transition-delay: 0.35s; }
+.skill-card:nth-child(8) { transition-delay: 0.4s; }
+.skill-card:nth-child(2) { transition-delay:

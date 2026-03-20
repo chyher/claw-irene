@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather | Irene 技能展示</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="../css/shared.css">
+  <link rel="stylesheet" href="../css/skill-detail.css">
+  
+  <style>
+    /* Weather 特定样式 */
+    
+    /* 搜索区域 */
+    .weather-search-section {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      position: relative;
+    }
+    
+    .search-container {
+      position: relative;
+      display: flex;
+      gap: 12px;
+    }
+    
+    .search-input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 16px 24px 16px 52px;
+      background: var(--bg-card);
+      border: var(--border-glow);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      font-size: 16px;
+      font-family: var(--font-body);
+      transition: all var(--duration-normal) var(--ease-out-expo);
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: var(--glow-cyan);
+    }
+    
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: var(--text-muted);
+      pointer-events: none;
+      transition: color var(--duration-normal);
+    }
+    
+    .search-input:focus + .search-icon {
+      color: var(--accent-cyan);
+    }
+    
+    .search-btn {
+      padding: 16px 32px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      border: none;
+      border-radius: var(--border-radius);
+      color: var(--bg-primary);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--ease-out-expo);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .search-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
+    }
+    
+    .search-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    /* 自动完成下拉 */
+    .autocomplete-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 8px;
+      background: var(--bg-card);
+      border: var(--border-glow);
+      border-radius: var(--border-radius-sm);
+      max-height: 240px;
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all var(--duration-normal) var(--ease-out-expo);
+      z-index: 100;
+    }
+    
+    .autocomplete-dropdown.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .autocomplete-item {
+      padding: 14px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all var(--duration-fast);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+    
+    .autocomplete-item:hover,
+    .autocomplete-item.selected {
+      background: rgba(0, 245, 255, 0.1);
+    }
+    
+    .autocomplete-item.selected {
+      border-left: 3px solid var(--accent-cyan);
+    }
+    
+    .autocomplete-icon {
+      font-size: 18px;
+      opacity: 0.7;
+    }
+    
+    .autocomplete-text {
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+    
+    /* 当前天气卡片 */
+    .current-weather-card {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(14, 165, 233, 0.1));
+      border: var(--border-glow);
+      border-radius: var(--border-radius-lg);
+      padding: 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--duration-slow) var(--ease-out-expo);
+    }
+    
+    .current-weather-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0, 245, 255, 0.1) 0%, transparent 50%);
+      animation: rotate-slow 20s linear infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes rotate-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .current-weather-card.loading {
+      opacity: 0.7;
+      transform: scale(0.98);
+    }
+    
+    .weather-city {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+    
+    .weather-date {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+    
+    .weather-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .weather-icon-large {
+      font-size: 120px;
+      line-height: 1;
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 30px rgba(0, 245, 255, 0.3));
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    /* 太阳旋转动画 */
+    .weather-icon-large.sun {
+      animation: rotate-sun 10s linear infinite, float 3s ease-in-out infinite;
+    }
+    
+    @keyframes rotate-sun {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    /* 云朵飘动动画 */
+    .weather-icon-large.cloud {
+      animation: drift 4s ease-in-out infinite;
+    }
+    
+    @keyframes drift {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(10px); }
+    }
+    
+    .weather-temp {
+      font-family: var(--font-display);
+      font-size: 72px;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    
+    .weather-condition {
+      font-size: 20px;
+      color: var(--text-secondary);
+    }
+    
+    /* 详细数据网格 */
+    .weather-details {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-top: 32px;
+    }
+    
+    @media (max-width: 768px) {
+      .weather-details {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .detail-item {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--border-radius-sm);
+      padding: 20px;
+      text-align: center;
+      transition: all var(--duration-normal);
+    }
+    
+    .detail-item:hover {
+      background: rgba(0, 245, 255, 0.1);
+      transform: translateY(-4px);
+    }
+    
+    .detail-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+    
+    .detail-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+    
+    .detail-value {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    /* 预报区域 */
+    .forecast-section {
+      margin-top: 48px;
+    }
+    
+    .forecast-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      text-align: center;
+      color: var(--text-primary);
+    }
+    
+    .forecast-container {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .forecast-container::-webkit-scrollbar {
+      height: 6px;
+    }
+    
+    .forecast-container::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+      border-radius: 3px;
+    }
+    
+    .forecast-container::-webkit-scrollbar-thumb {
+      background: rgba(0, 245, 255, 0.3);
+      border-radius: 3px;
+    }
+    
+    .forecast-card {
+      flex: 0 0 140px;
+      background: var(--bg-card);
+      border: var(--border-subtle);
+      border-radius: var(--border-radius);
+      padding: 24px 16px;
+      text-align: center;
+      scroll-snap-align: start;
+      transition: all var(--duration-normal) var(--ease-out-expo);
+      cursor: pointer;
+    }
+    
+    .forecast-card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: var(--glow-cyan);
+    }
+    
+    .forecast-day {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+    
+    .forecast-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .forecast-condition {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    
+    .forecast-temps {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      font-size: 14px;
+    }
+    
+    .temp-high {
+      color: var(--accent-orange);
+      font-weight: 600;
+    }
+    
+    .temp-low {
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+    
+    /* 功能特性卡片 */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin: 40px 0;
+    }
+    
+    .feature-card {
+      background: var(--bg-card);
+      border: var(--border-subtle);
+      border-radius: var(--border-radius);
+      padding: 28px;
+      transition: all var(--duration-normal) var(--ease-out-expo);
+    }
+    
+    .feature-card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-4px);
+      box-shadow: var(--glow-cyan);
+    }
+    
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+      background: rgba(0, 245, 255, 0.1);
+    }
+    
+    .feature-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+    
+    .feature-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    
+    /* 城市快速选择 */
+    .quick-cities {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    
+    .city-chip {
+      padding: 10px 20px;
+      background: var(--bg-card);
+      border: var(--border-subtle);
+      border-radius: 50px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--duration-normal);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .city-chip:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      background: rgba(0, 245, 255, 0.1);
+    }
+    
+    .city-chip.active {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      color: var(--bg-primary);
+      border-color: transparent;
+    }
+    
+    /* 加载动画 */
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(0, 245, 255, 0.3);
+      border-top-color: var(--accent-cyan);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* 温度数字滚动效果 */
+    .temp-animate {
+      display: inline-block;
+      animation: temp-roll 0.6s var(--ease-out-expo);
+    }
+    
+    @keyframes temp-roll {
+      0% { 
+        opacity: 0;
+        transform: translateY(-20px);
+        filter: blur(4px);
+      }
+      100% { 
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+    
+    /* 页脚 */
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    
+    footer .heart {
+      color: var(--accent-magenta);
+    }
+    
+    /* 响应式优化 */
+    @media (max-width: 640px) {
+      .current-weather-card {
+        padding: 32px 24px;
+      }
+      
+      .weather-temp {
+        font-size: 56px;
+      }
+      
+      .weather-icon-large {
+        font-size: 80px;
+      }
+      
+      .search-container {
+        flex-direction: column;
+      }
+      
+      .search-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="top: 10%; left: 10%; background: radial-gradient(circle, rgba(0, 245, 255, 0.15), transparent 70%);"></div>
+  <div class="bg-glow" style="bottom: 20%; right: 10%; background: radial-gradient(circle, rgba(14, 165, 233, 0.1), transparent 70%);"></div>
+
+  <!-- Back Button -->
+  <a href="../index.html" class="back-button">返回首页</a>
+
+  <!-- Main Content -->
+  <main class="skill-detail-page">
+    <!-- Hero Section -->
+    <header class="skill-header">
+      <div class="skill-icon-large" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.2), rgba(14, 165, 233, 0.2));">
+        🌤️
+      </div>
+      <h1 class="skill-title">Weather</h1>
+      <p class="skill-subtitle">天气查询与预报</p>
+      <div class="skill-badges">
+        <span class="skill-badge pro">PRO</span>
+        <span class="skill-badge new">实用</span>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Search Section -->
+      <section class="weather-search-section">
+        <div class="search-container">
+          <div class="search-input-wrapper">
+            <input 
+              type="text" 
+              class="search-input" 
+              id="cityInput"
+              placeholder="输入城市名称..."
+              autocomplete="off"
+            >
+            <span class="search-icon">🔍</span>
+            <div class="autocomplete-dropdown" id="autocompleteDropdown">
+              <!-- 自动完成选项将动态插入 -->
+            </div>
+          </div>
+          <button class="search-btn" id="searchBtn">
+            <span>查询</span>
+          </button>
+        </div>
+        
+        <!-- 快速选择城市 -->
+        <div class="quick-cities" id="quickCities">
+          <span class="city-chip active" data-city="北京">📍 北京</span>
+          <span class="city-chip" data-city="上海">📍 上海</span>
+          <span class="city-chip" data-city="广州">📍 广州</span>
+          <span class="city-chip" data-city="深圳">📍 深圳</span>
+          <span class="city-chip" data-city="杭州">📍 杭州</span>
+          <span class="city-chip" data-city="成都">📍 成都</span>
+        </div>
+      </section>
+
+      <!-- Current Weather Section -->
+      <section class="current-weather-section">
+        <div class="current-weather-card" id="currentWeatherCard">
+          <div class="weather-city" id="cityName">北京</div>
+          <div class="weather-date" id="currentDate">2024年3月20日 星期三</div>
+          
+          <div class="weather-main">
+            <div class="weather-icon-large sun" id="weatherIcon">☀️</div>
+            <div class="weather-temp" id="currentTemp">22°</div>
+            <div class="weather-condition" id="weatherCondition">晴朗</div>
+          </div>
+          
+          <div class="weather-details">
+            <div class="detail-item">
+              <div class="detail-icon">💧</div>
+              <div class="detail-label">湿度</div>
+              <div class="detail-value" id="humidity">45%</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-icon">💨</div>
+              <div class="detail-label">风速</div>
+              <div class="detail-value" id="windSpeed">3级</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-icon">📊</div>
+              <div class="detail-label">气压</div>
+              <div class="detail-value" id="pressure">1013hPa</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-icon">☀️</div>
+              <div class="detail-label">紫外线</div>
+              <div class="detail-value" id="uvIndex">中等</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Forecast Section -->
+      <section class="forecast-section">
+        <h3 class="forecast-title">未来5天预报</h3>
+        <div class="forecast-container" id="forecastContainer">
+          <!-- 预报卡片将动态插入 -->
+        </div>
+      </section>
+
+      <!-- Features Section -->
+      <section class="section">
+        <h2 class="section-title">功能特性</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🌡️</div>
+            <h3 class="feature-title">实时天气</h3>
+            <p class="feature-desc">获取当前温度、湿度、风速等详细天气数据，实时更新</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3 class="feature-title">未来预报</h3>
+            <p class="feature-desc">查看未来5天天气趋势，提前规划出行和活动安排</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🌍</div>
+            <h3 class="feature-title">多城市支持</h3>
+            <p class="feature-desc">支持全球主要城市查询，随时切换查看不同地区天气</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔓</div>
+            <h3 class="feature-title">无需API Key</h3>
+            <p class="feature-desc">完全免费使用，无需注册或配置任何API密钥</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Irene Expression -->
+  <div class="irene-expression" id="ireneMood">
+    <div class="irene-avatar">☀️</div>
+    <div class="irene-bubble">
+      <span>今天天气不错，要出去走走吗？</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>Made with <span class="heart">♥</span> by Irene · 2024</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/shared.js"></script>
+  <script src="../js/demos/weather-demo.js"></script>
+</body>
+</html>

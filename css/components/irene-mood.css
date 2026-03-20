@@ -1,0 +1,307 @@
+/* =============================================
+   IreneMood Component Styles
+   ============================================= */
+
+.irene-mood {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.irene-mood__avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  position: relative;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(0, 245, 255, 0.3);
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.irene-mood__avatar::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta), var(--accent-cyan));
+  z-index: -1;
+  animation: moodRingRotate 4s linear infinite;
+}
+
+.irene-mood__avatar::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+  filter: blur(15px);
+  opacity: 0.4;
+  z-index: -2;
+  animation: moodGlowPulse 2s ease-in-out infinite;
+}
+
+.irene-mood__avatar:hover {
+  transform: scale(1.1);
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(0, 245, 255, 0.5);
+}
+
+/* Mood States */
+.irene-mood--idle .irene-mood__avatar {
+  animation: moodFloat 3s ease-in-out infinite;
+}
+
+.irene-mood--happy .irene-mood__avatar {
+  animation: moodBounce 0.6s var(--ease-spring);
+}
+
+.irene-mood--thinking .irene-mood__avatar {
+  animation: moodTilt 2s ease-in-out infinite;
+}
+
+.irene-mood--excited .irene-mood__avatar {
+  animation: moodShake 0.5s ease-in-out;
+}
+
+.irene-mood--sleepy .irene-mood__avatar {
+  animation: moodSlowBreath 4s ease-in-out infinite;
+}
+
+/* Mood Animations */
+@keyframes moodFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes moodBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+@keyframes moodTilt {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+@keyframes moodShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px) rotate(-5deg); }
+  75% { transform: translateX(5px) rotate(5deg); }
+}
+
+@keyframes moodSlowBreath {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes moodRingRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes moodGlowPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.6; }
+}
+
+/* Speech Bubble */
+.irene-mood__bubble {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid rgba(0, 245, 255, 0.3);
+  border-radius: 16px;
+  padding: 12px 16px;
+  min-width: 150px;
+  max-width: 250px;
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  opacity: 0;
+  transform: translateY(10px) scale(0.9);
+  transition: all 0.3s var(--ease-out-expo);
+  pointer-events: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.irene-mood__bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid var(--bg-card);
+}
+
+.irene-mood__bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  right: 19px;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 9px solid rgba(0, 245, 255, 0.3);
+}
+
+.irene-mood__bubble--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.irene-mood__bubble-text {
+  display: block;
+}
+
+/* Particle Effects */
+.irene-mood__particles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  pointer-events: none;
+}
+
+.irene-mood__particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.irene-mood--excited .irene-mood__particle {
+  animation: particleBurst 1s ease-out forwards;
+}
+
+@keyframes particleBurst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) scale(0);
+  }
+}
+
+/* Tooltip */
+.irene-mood__tooltip {
+  position: absolute;
+  bottom: 75px;
+  right: 50%;
+  transform: translateX(50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.irene-mood__avatar:hover .irene-mood__tooltip {
+  opacity: 1;
+}
+
+/* Status Indicator */
+.irene-mood__status {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  border: 2px solid var(--bg-primary);
+}
+
+.irene-mood__status--busy {
+  background: var(--accent-yellow);
+  animation: statusBusy 1s ease-in-out infinite;
+}
+
+.irene-mood__status--offline {
+  background: var(--text-muted);
+}
+
+@keyframes statusBusy {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Interactive Hint */
+.irene-mood__hint {
+  position: absolute;
+  bottom: -30px;
+  right: 0;
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+
+.irene-mood:hover .irene-mood__hint {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .irene-mood {
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  .irene-mood__avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+  
+  .irene-mood__bubble {
+    right: -10px;
+    min-width: 120px;
+    max-width: 200px;
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+  
+  .irene-mood__hint {
+    display: none;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .irene-mood__avatar,
+  .irene-mood__avatar::before,
+  .irene-mood__avatar::after {
+    animation: none !important;
+  }
+}
