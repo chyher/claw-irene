@@ -400,22 +400,12 @@ h1, h2, h3, h4, h5, h6 {
 /* ---------------------------------------------
    Scrollbar Styling
    --------------------------------------------- */
+/* ---------------------------------------------
+   Scrollbar Hide
+   --------------------------------------------- */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 245, 255, 0.3);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 245, 255, 0.5);
+  width: 0px;
+  background: transparent;
 }
 
 /* ---------------------------------------------

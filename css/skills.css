@@ -185,12 +185,12 @@
     inset 0 0 30px rgba(34, 197, 94, 0.05);
 }
 
-.skill-card[data-skill="word-docx"]:hover {
-  border-color: #0ea5e9;
-  box-shadow: 
-    0 0 30px rgba(14, 165, 233, 0.3),
-    0 0 60px rgba(14, 165, 233, 0.1),
-    inset 0 0 30px rgba(14, 165, 233, 0.05);
+.skill-card[data-skill="uml-drawio"]:hover {
+  border-color: #a855f7;
+  box-shadow:
+    0 0 30px rgba(168, 85, 247, 0.3),
+    0 0 60px rgba(168, 85, 247, 0.1),
+    inset 0 0 30px rgba(168, 85, 247, 0.05);
 }
 
 .skill-card[data-skill="rag"]:hover {
@@ -261,7 +261,7 @@
 .skill-card[data-skill="canvas-design"]:hover .skill-name { color: #f59e0b; }
 .skill-card[data-skill="frontend-design"]:hover .skill-name { color: #6366f1; }
 .skill-card[data-skill="tavily-search"]:hover .skill-name { color: #22c55e; }
-.skill-card[data-skill="word-docx"]:hover .skill-name { color: #0ea5e9; }
+.skill-card[data-skill="uml-drawio"]:hover .skill-name { color: #a855f7; }
 .skill-card[data-skill="rag"]:hover .skill-name { color: #ec4899; }
 .skill-card[data-skill="weather"]:hover .skill-name { color: #fbbf24; }
 

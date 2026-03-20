@@ -10,7 +10,7 @@ const skillsData = [
   { id: 'canvas-design', name: 'Canvas Design', icon: '🎨', desc: '商业海报、信息图设计', mood: '😸', url: 'skills/canvas-design.html' },
   { id: 'frontend-design', name: 'Frontend Design', icon: '💻', desc: '高保真交互界面设计', mood: '🤖', url: 'skills/frontend-design.html' },
   { id: 'tavily-search', name: 'Tavily Search', icon: '🔍', desc: '智能网络搜索', mood: '🧐', url: 'skills/tavily-search.html' },
-  { id: 'word-docx', name: 'Word DOCX', icon: '📘', desc: '精准读写Word文档', mood: '📝', url: 'skills/word-docx.html' },
+  { id: 'uml-drawio', name: 'UML Drawio', icon: '🏗️', desc: '生成专业UML图表', mood: '🏗️', url: 'skills/uml-drawio.html' },
   { id: 'rag', name: 'RAG', icon: '🧠', desc: '企业级知识库问答', mood: '💡', url: 'skills/rag.html' },
   { id: 'weather', name: 'Weather', icon: '🌤️', desc: '天气查询与预报', mood: '☀️', url: 'skills/weather.html' }
 ];

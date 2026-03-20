@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UML Drawio | Irene 技能展示</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/shared.css">
+  <link rel="stylesheet" href="../css/skill-detail.css">
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="top: 10%; left: 10%;"></div>
+  
+  <a href="../index.html" class="back-button">返回首页</a>
+
+  <main class="skill-detail-page">
+    <header class="skill-header">
+      <div class="skill-icon-large">🏗️</div>
+      <h1 class="skill-title">UML Drawio</h1>
+      <p class="skill-subtitle">使用 Draw.io 生成专业 UML 图表</p>
+      <div class="skill-badges">
+        <span class="skill-badge">BETA</span>
+      </div>
+    </header>
+
+    <div class="container">
+      <section class="section">
+        <h2 class="section-title">UML 图表生成器</h2>
+        <p style="text-align: center; color: var(--text-secondary); margin-bottom: 32px;">
+          通过自然语言描述或代码生成专业的 UML 图表
+        </p>
+        
+        <div style="background: var(--bg-card); border-radius: 16px; padding: 32px; text-align: center;">
+          <div style="font-size: 64px; margin-bottom: 24px;">🏗️</div>
+          <h3 style="font-size: 24px; margin-bottom: 16px;">开发中</h3>
+          <p style="color: var(--text-secondary); margin-bottom: 24px;">
+            UML Drawio 技能正在开发中，由 openclaw-doc agent 提供支持<br>
+            支持类图、时序图、流程图等多种 UML 图表生成
+          </p>
+          <div style="display: flex; gap: 16px; justify-content: center;">
+            <span class="skill-badge">类图</span>
+            <span class="skill-badge">时序图</span>
+            <span class="skill-badge">流程图</span>
+            <span class="skill-badge">架构图</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">功能特性</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+          <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h3 class="feature-title">自然语言生成</h3>
+            <p class="feature-desc">用中文描述需求，自动生成 UML 图表</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎨</div>
+            <h3 class="feature-title">Draw.io 格式</h3>
+            <p class="feature-desc">生成标准 Draw.io 格式，可继续编辑</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📤</div>
+            <h3 class="feature-title">多格式导出</h3>
+            <p class="feature-desc">支持 PNG、SVG、PDF 等多种格式导出</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔧</div>
+            <h3 class="feature-title">智能优化</h3>
+            <p class="feature-desc">自动布局优化，图表美观专业</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>Made with <span class="heart">♥</span> by Irene · 2024</p>
+  </footer>
+
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-card: rgba(20, 20, 30, 0.8);
+      --text-primary: #e8e8f0;
+      --text-secondary: #9898a8;
+      --accent-cyan: #00f5ff;
+    }
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      margin: 0;
+      min-height: 100vh;
+    }
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+    .bg-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0, 245, 255, 0.1), transparent 70%);
+      pointer-events: none;
+    }
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      border-radius: 8px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      z-index: 100;
+    }
+    .skill-detail-page {
+      padding: 80px 20px 40px;
+    }
+    .skill-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .skill-icon-large {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.2), rgba(168, 85, 247, 0.2));
+    }
+    .skill-title {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+    .skill-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+    .skill-badges {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    .skill-badge {
+      padding: 4px 12px;
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--accent-cyan);
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .section {
+      margin-bottom: 48px;
+    }
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    .feature-title {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .feature-desc {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-secondary);
+    }
+    .heart {
+      color: #ff00aa;
+    }
+  </style>
+</body>
+</html>
